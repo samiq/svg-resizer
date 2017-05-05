@@ -111,24 +111,25 @@ svgFiles.forEach(function(svgPath) {
         echo('Error converting file: ' + svgPath);
     }
 
-    // read resized file and change pt to px
-    var resizedFileContent = fs.readFileSync(outputPath, 'utf8');
+    // if output format is svg change pt to px
+    if (opts.format == 'svg'){            
+        var resizedFileContent = fs.readFileSync(outputPath, 'utf8');
 
-    parseString(resizedFileContent, function (err, parsedFileContent) {
-        var w = parsedFileContent.svg.$.width;
-        var h = parsedFileContent.svg.$.height;
+        parseString(resizedFileContent, function (err, parsedFileContent) {
+            var w = parsedFileContent.svg.$.width;
+            var h = parsedFileContent.svg.$.height;
 
-        w = w.match(/pt$/) ? ptToPx(parseInt(w, 10)) + 'px' : w;
-        h = h.match(/pt$/) ? ptToPx(parseInt(h, 10)) + 'px' : h;
+            w = w.match(/pt$/) ? ptToPx(parseInt(w, 10)) + 'px' : w;
+            h = h.match(/pt$/) ? ptToPx(parseInt(h, 10)) + 'px' : h;
 
-        parsedFileContent.svg.$.width = w;
-        parsedFileContent.svg.$.height = h;
-        // parsedFileContent.svg.$.viewBox = [0, 0, parseInt(w, 10), parseInt(h, 10)].join(' ');
+            parsedFileContent.svg.$.width = w;
+            parsedFileContent.svg.$.height = h;
+            // parsedFileContent.svg.$.viewBox = [0, 0, parseInt(w, 10), parseInt(h, 10)].join(' ');
 
-        var finalSVG = builder.buildObject(parsedFileContent);
-        fs.outputFileSync(outputPath, finalSVG);
-    });
-
+            var finalSVG = builder.buildObject(parsedFileContent);
+            fs.outputFileSync(outputPath, finalSVG);
+        });
+    }
 });
 
 exit(0);
